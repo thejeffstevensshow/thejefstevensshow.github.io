@@ -2,335 +2,1213 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-  />
-  <meta name="theme-color" content="#0b0b0b" />
-  <meta name="description" content="Decus OS Daily Execution System" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <title>Decus OS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#08090d" />
+  <title>Decus OS v2</title>
   <style>
-    :root{
-      --text:#f5f0e7; --muted:#b8aa8a; --line:rgba(255,227,170,.12);
-      --accent:#d6b36a; --accent-2:#f1d18c; --accent-soft:rgba(214,179,106,.16);
-      --accent-line:rgba(214,179,106,.24); --accent-glow:rgba(214,179,106,.18);
+    :root {
+      --bg: #06070a;
+      --bg2: #0c0f14;
+      --panel: rgba(12, 14, 18, 0.82);
+      --panel2: rgba(17, 21, 27, 0.92);
+      --text: #eef2f7;
+      --muted: #9aa4b5;
+      --gold: #d7b56d;
+      --gold2: #f3d89a;
+      --cyan: #67d5ff;
+      --cyan2: #b3efff;
+      --line: rgba(255,255,255,0.08);
+      --line2: rgba(103,213,255,0.18);
+      --good: #6fe3a0;
+      --danger: #f27886;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 24px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --accent: var(--gold);
+      --accent2: var(--cyan);
+      --accentSoft: rgba(103,213,255,.16);
+      --accentGoldSoft: rgba(215,181,109,.16);
     }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{height:100%}
-    body{
-      margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-      color:var(--text);
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(214,179,106,.12), transparent 35%),
-        radial-gradient(circle at 85% 10%, rgba(214,179,106,.08), transparent 30%),
-        radial-gradient(circle at bottom center, rgba(255,255,255,.03), transparent 30%),
-        linear-gradient(180deg, #0a0a0a 0%, #050505 45%, #030303 100%);
-      overflow:hidden;
+        radial-gradient(circle at 10% 10%, rgba(103,213,255,.14), transparent 24%),
+        radial-gradient(circle at 85% 12%, rgba(215,181,109,.12), transparent 24%),
+        radial-gradient(circle at 50% 100%, rgba(111,227,160,.08), transparent 28%),
+        linear-gradient(180deg, #090b0f 0%, #06070a 42%, #050608 100%);
+      overflow: hidden;
     }
-    body::before,body::after{
-      content:"";position:fixed;inset:-15%;pointer-events:none;z-index:0;
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -10%;
+      pointer-events: none;
+      z-index: 0;
     }
-    body::before{
+    body::before {
       background:
-        radial-gradient(circle at 15% 20%, rgba(214,179,106,.14), transparent 22%),
-        radial-gradient(circle at 80% 15%, rgba(120,160,220,.08), transparent 20%),
-        radial-gradient(circle at 70% 75%, rgba(80,180,120,.08), transparent 24%);
-      filter:blur(26px);animation:floatGlow 20s ease-in-out infinite alternate;opacity:.9;
+        radial-gradient(circle at 18% 28%, rgba(103,213,255,.16), transparent 18%),
+        radial-gradient(circle at 82% 24%, rgba(215,181,109,.12), transparent 18%),
+        radial-gradient(circle at 60% 78%, rgba(103,213,255,.07), transparent 22%);
+      filter: blur(30px);
+      animation: floatGlow 14s ease-in-out infinite alternate;
+      opacity: .9;
     }
-    body::after{
-      background-image:radial-gradient(circle, rgba(255,255,255,.10) 0 1px, transparent 1px);
-      background-size:26px 26px;opacity:.08;animation:drift 26s linear infinite;
+    body::after {
+      background-image: radial-gradient(circle, rgba(255,255,255,.10) 0 1px, transparent 1px);
+      background-size: 26px 26px;
+      opacity: .055;
+      animation: drift 32s linear infinite;
     }
-    @keyframes floatGlow{0%{transform:translate3d(0,0,0) scale(1);opacity:.85}100%{transform:translate3d(0,-18px,0) scale(1.03);opacity:1}}
-    @keyframes drift{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-40px,20px,0)}}
-    .app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;max-width:900px;margin:0 auto;padding:14px 14px 12px}
-    .glass{background:linear-gradient(180deg, rgba(25,25,25,.88), rgba(10,10,10,.86));border:1px solid var(--line);box-shadow:0 12px 40px rgba(0,0,0,.42),0 0 0 1px rgba(241,209,140,.1),0 0 26px rgba(214,179,106,.12);backdrop-filter:blur(16px) saturate(130%)}
-    .hero{border-radius:30px;padding:16px;position:relative;overflow:hidden}
-    .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-    .title-row{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
-    h1{margin:0;font-size:clamp(24px,4vw,36px);line-height:1.03;font-weight:800;letter-spacing:-.03em}
-    .hero-sub{color:#d1c3a3;font-size:13px;line-height:1.45;margin-top:8px;max-width:56ch}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,227,170,.14);color:var(--accent-2);font-size:12px}
-    .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent-2);animation:pulse 2s infinite}
-    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(241,209,140,.65)}70%{box-shadow:0 0 0 12px rgba(241,209,140,0)}100%{box-shadow:0 0 0 0 rgba(241,209,140,0)}}
-    .hero-actions,.utility-row{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .utility-row{grid-template-columns:1fr auto;align-items:center}
-    button{border:0;background:none;color:inherit;font:inherit;cursor:pointer}
-    .btn{min-height:52px;border-radius:18px;padding:14px 16px;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s ease}
-    .btn:active{transform:scale(.985)}
-    .btn-primary{color:#1b1407;font-weight:800;background:linear-gradient(180deg,#f0cf8b,#cfa45b)}
-    .btn-secondary,.sound-toggle,.day-btn,.mini{background:rgba(255,255,255,.03);border:1px solid var(--line);color:var(--text)}
-    .progress-wrap{padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
-    .progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px}
-    .progress-track{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden}
-    .progress-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 16px var(--accent-glow);transition:width .6s ease}
-    .meta{margin-top:10px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px}
-    .days-nav{margin-top:12px;display:flex;gap:8px;overflow:auto;padding-bottom:4px;scrollbar-width:none}
-    .days-nav::-webkit-scrollbar{display:none}
-    .day-btn{flex:0 0 auto;min-width:58px;min-height:42px;padding:10px 12px;border-radius:14px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-    .day-btn.active,.mini.active{color:#140f07;background:linear-gradient(180deg,var(--accent-2),var(--accent));border-color:transparent}
-    .content{min-height:0;flex:1 1 auto;padding-top:14px;overflow:auto;scroll-behavior:smooth}
-    .execute-panel{display:none;margin-bottom:14px;border-radius:28px;padding:14px;position:sticky;top:0;z-index:20}
-    .execute-panel.active{display:block}
-    .execute-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
-    .execute-title,.section-label{font-size:11px;text-transform:uppercase;letter-spacing:.22em;color:var(--muted)}
-    .timer{font-size:12px;color:var(--accent-2);padding:7px 10px;border-radius:999px;background:var(--accent-soft);border:1px solid var(--accent-line);white-space:nowrap}
-    .execute-card{border-radius:24px;padding:16px;background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));border:1px solid rgba(255,227,170,.12)}
-    .execute-time{color:var(--accent-2);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
-    .execute-task{font-size:24px;font-weight:800;line-height:1.06;letter-spacing:-.03em;margin-bottom:10px}
-    .execute-notes,.details-notes{color:#dccca9;font-size:14px;line-height:1.52;margin-bottom:14px}
-    .steps{display:grid;gap:8px;margin:0;padding:0;list-style:none}
-    .step{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,227,170,.08);font-size:13px;color:#f0e4cb;line-height:1.45}
-    .step-index{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;background:linear-gradient(180deg, rgba(241,209,140,.28), rgba(214,179,106,.14));color:var(--accent-2);border:1px solid rgba(241,209,140,.18)}
-    .section-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 12px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.18em}
-    .schedule{display:grid;gap:10px;padding-bottom:18px}
-    .block{border-radius:24px;overflow:hidden;transition:border-color .2s ease, box-shadow .2s ease;border:1px solid transparent;position:relative}
-    .block.current{border-color:var(--accent-line);box-shadow:0 10px 28px rgba(0,0,0,.24),0 0 22px var(--accent-glow)}
-    .block::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--block-accent,var(--accent))}
-    .block-btn{width:100%;text-align:left;padding:14px 14px 14px 18px;display:block}
-    .block-top{display:flex;align-items:center;gap:12px;justify-content:space-between}
-    .time-wrap{min-width:90px;flex:0 0 auto}
-    .time{font-size:12px;color:var(--accent-2);letter-spacing:.14em;text-transform:uppercase;font-weight:700}
-    .duration{margin-top:4px;font-size:11px;color:var(--muted)}
-    .block-main{min-width:0;flex:1 1 auto}
-    .task{font-size:16px;font-weight:750;line-height:1.18;letter-spacing:-.02em;margin:0 0 5px}
-    .summary{margin:0;color:#d4c6a7;font-size:13px;line-height:1.42}
-    .chip{flex:0 0 auto;padding:8px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid rgba(255,227,170,.12);background:rgba(255,255,255,.03);color:var(--muted);white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
-    .current .chip{color:#111;background:linear-gradient(180deg,var(--accent-2),var(--accent));border-color:transparent}
-    .block-details{max-height:0;overflow:hidden;transition:max-height .35s ease, opacity .25s ease, padding .25s ease;opacity:0;padding:0 14px 0 18px}
-    .block.expanded .block-details{max-height:1200px;opacity:1;padding:0 14px 14px 18px}
-    .divider{height:1px;background:linear-gradient(90deg, transparent, rgba(255,227,170,.12), transparent);margin:0 0 12px}
-    .floating-nav{position:sticky;bottom:0;z-index:30;padding:6px 0 10px;background:linear-gradient(180deg, transparent, rgba(3,3,3,.75) 35%, rgba(3,3,3,.97))}
-    .floating-inner{display:flex;gap:10px;padding:10px;border-radius:24px}
-    .mini{flex:1;min-height:52px;border-radius:18px;padding:12px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
-    @media (max-width:700px){.hero-actions,.utility-row{grid-template-columns:1fr}.title-row{flex-direction:column}.block-top{align-items:flex-start}}
+
+    @keyframes floatGlow {
+      from { transform: translate3d(0,0,0) scale(1); }
+      to { transform: translate3d(0,-18px,0) scale(1.03); }
+    }
+    @keyframes drift {
+      from { transform: translate3d(0,0,0); }
+      to { transform: translate3d(-30px,18px,0); }
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding-top: calc(var(--safe-top) + 12px);
+      padding-bottom: calc(var(--safe-bottom) + 12px);
+    }
+
+    .shell {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      padding: 0 12px;
+    }
+
+    .glass {
+      background: linear-gradient(180deg, rgba(18,22,29,.9), rgba(8,10,14,.9));
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.03);
+      backdrop-filter: blur(18px) saturate(130%);
+      -webkit-backdrop-filter: blur(18px) saturate(130%);
+    }
+
+    .top {
+      border-radius: 28px;
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .top::after {
+      content: "";
+      position: absolute;
+      inset: -30% auto auto -10%;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(103,213,255,.16), transparent 70%);
+      filter: blur(18px);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 40px);
+      letter-spacing: -.04em;
+      line-height: 1;
+    }
+    .sub {
+      margin-top: 8px;
+      max-width: 56ch;
+      color: #c8d1dd;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .live {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line2);
+      background: rgba(255,255,255,.03);
+      color: var(--cyan2);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan2);
+      box-shadow: 0 0 0 0 rgba(179,239,255,.7);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(179,239,255,.7); }
+      70% { box-shadow: 0 0 0 12px rgba(179,239,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(179,239,255,0); }
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+    button {
+      border: 0;
+      cursor: pointer;
+      color: inherit;
+    }
+    .btn {
+      min-height: 48px;
+      border-radius: 16px;
+      padding: 12px 16px;
+      transition: .18s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn:active { transform: scale(.985); }
+    .btn-primary {
+      color: #0d0d0d;
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+      box-shadow: 0 10px 24px rgba(215,181,109,.22), inset 0 1px 0 rgba(255,255,255,.28);
+      font-weight: 800;
+    }
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+    }
+    .btn-cyber {
+      color: var(--cyan2);
+      background: rgba(103,213,255,.08);
+      border: 1px solid rgba(103,213,255,.18);
+      box-shadow: 0 0 20px rgba(103,213,255,.08);
+    }
+
+    .progressCard {
+      display: grid;
+      gap: 8px;
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+    }
+    .progressMeta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--muted);
+    }
+    .progressTrack {
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      overflow: hidden;
+    }
+    .progressFill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cyan), var(--gold));
+      box-shadow: 0 0 20px rgba(103,213,255,.18);
+      transition: width .5s ease;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      min-width: 58px;
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+    }
+    .tab.active {
+      color: #111;
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+      border-color: transparent;
+      box-shadow: 0 10px 22px rgba(215,181,109,.2);
+    }
+
+    .body {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .main {
+      min-height: 0;
+      overflow: auto;
+      padding-right: 2px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .panel {
+      border-radius: 24px;
+      padding: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+    .stat {
+      border-radius: 20px;
+      padding: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      min-height: 110px;
+    }
+    .statLabel {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      font-size: 11px;
+    }
+    .statValue {
+      margin-top: 10px;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -.04em;
+    }
+    .statSub {
+      margin-top: 6px;
+      color: #c8d1dd;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .sectionHead {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      margin: 2px 2px 0;
+    }
+
+    .schedule {
+      display: grid;
+      gap: 10px;
+    }
+
+    .block {
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid transparent;
+      position: relative;
+      transition: .18s ease;
+    }
+    .block.current {
+      border-color: rgba(103,213,255,.22);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.02), 0 0 22px rgba(103,213,255,.08);
+    }
+    .block::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--blockAccent, var(--cyan));
+      box-shadow: 0 0 16px var(--blockAccentSoft, rgba(103,213,255,.15));
+    }
+    .blockBtn {
+      width: 100%;
+      text-align: left;
+      background: none;
+      color: inherit;
+      padding: 14px 14px 14px 18px;
+    }
+    .blockTop {
+      display: grid;
+      grid-template-columns: 96px 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+    .time {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--cyan2);
+    }
+    .duration {
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .task {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+    }
+    .summary {
+      margin-top: 5px;
+      color: #cfd8e3;
+      font-size: 13px;
+      line-height: 1.42;
+    }
+    .chip {
+      max-width: 130px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .block.current .chip {
+      color: #111;
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+      border-color: transparent;
+    }
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: .25s ease;
+      padding: 0 14px 0 18px;
+    }
+    .block.expanded .details {
+      max-height: 900px;
+      opacity: 1;
+      padding: 0 14px 14px 18px;
+    }
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      margin-bottom: 12px;
+    }
+    .notes {
+      color: #d7dfeb;
+      font-size: 13px;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+    .steps {
+      display: grid;
+      gap: 8px;
+    }
+    .step {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      color: #eef2f7;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .stepIndex {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(103,213,255,.12);
+      color: var(--cyan2);
+      border: 1px solid rgba(103,213,255,.2);
+    }
+
+    .execute {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 25;
+      border-radius: 24px;
+      padding: 14px;
+    }
+    .execute.active { display: block; }
+    .executeHead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .timer {
+      border-radius: 999px;
+      padding: 8px 10px;
+      border: 1px solid var(--line2);
+      background: rgba(103,213,255,.08);
+      color: var(--cyan2);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .executeCard {
+      border-radius: 22px;
+      padding: 16px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+    }
+    .executeRange {
+      color: var(--cyan2);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-weight: 800;
+    }
+    .executeTitle {
+      margin-top: 8px;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1.05;
+    }
+    .executeNotes {
+      margin-top: 10px;
+      color: #d7dfeb;
+      font-size: 14px;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
+    .sidebar {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .modeGrid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+    .toggleCard {
+      padding: 14px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      display: grid;
+      gap: 8px;
+    }
+    .toggleCard strong {
+      font-size: 14px;
+      letter-spacing: -.01em;
+    }
+    .toggleCard p {
+      margin: 0;
+      color: #c8d1dd;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .switch {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 4px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      gap: 4px;
+      width: fit-content;
+    }
+    .switch button {
+      padding: 9px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .switch button.active {
+      color: #111;
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+    }
+
+    .branchGrid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+    .branchCard {
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      min-height: 92px;
+    }
+    .branchCard strong {
+      display: block;
+      font-size: 13px;
+      letter-spacing: -.01em;
+      margin-bottom: 6px;
+    }
+    .branchCard span {
+      display: block;
+      font-size: 12px;
+      color: #c8d1dd;
+      line-height: 1.45;
+    }
+
+    .footerNav {
+      position: sticky;
+      bottom: 0;
+      z-index: 28;
+      padding-top: 2px;
+      background: linear-gradient(180deg, transparent, rgba(6,7,10,.9) 34%, rgba(6,7,10,1));
+    }
+    .footerInner {
+      border-radius: 22px;
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+    }
+    .mini {
+      flex: 1;
+      min-height: 50px;
+      border-radius: 16px;
+      color: var(--text);
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      font-weight: 800;
+    }
+    .mini.active {
+      color: #111;
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+      border-color: transparent;
+    }
+
+    .modalWrap {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 12px;
+    }
+    .modalWrap.open { display: flex; }
+    .modal {
+      width: min(760px, 100%);
+      max-height: calc(100vh - 24px);
+      overflow: auto;
+      border-radius: 26px;
+      padding: 18px;
+    }
+    .modalGrid {
+      display: grid;
+      gap: 12px;
+    }
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+    .field label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+    }
+    .field input, .field textarea, .field select {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      padding: 12px 14px;
+      outline: none;
+    }
+    .field textarea {
+      min-height: 98px;
+      resize: vertical;
+    }
+
+    @media (min-width: 1100px) {
+      .shell {
+        grid-template-rows: auto 1fr;
+      }
+      .body {
+        grid-template-columns: minmax(0, 1.45fr) minmax(340px, .7fr);
+      }
+      .stats { grid-template-columns: repeat(4, minmax(0,1fr)); }
+      .branchGrid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 820px) {
+      .hero { grid-template-columns: 1fr; }
+      .blockTop { grid-template-columns: 1fr; }
+      .chip { max-width: none; width: fit-content; }
+      .stats { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="hero glass">
-      <div class="eyebrow">Decus OS • Installable Desktop App</div>
-      <div class="title-row">
-        <div>
-          <h1>Daily Execution</h1>
-          <div class="hero-sub">Installable desktop web app with seven-day rotation, execute mode, countdown timer, offline support, and branch-led visual identity.</div>
+    <div class="shell">
+      <div class="top glass">
+        <div class="eyebrow">Decus OS v2 • Hybrid Command System</div>
+        <div class="hero">
+          <div>
+            <h1>Cyber Luxury Command</h1>
+            <div class="sub">Hybrid execution. Editable tasks. Seven-day rotation. Local saving. A richer OS shell that still deploys as a single-file GitHub Pages app.</div>
+          </div>
+          <div class="live"><span class="dot"></span><span id="liveText">Live Schedule</span></div>
         </div>
-        <div class="badge"><span class="pulse"></span><span id="liveStatus">Live Schedule</span></div>
-      </div>
-      <div class="hero-actions">
-        <button class="btn btn-primary" id="executeToggleBtn"><span>⚔️</span><span id="executeToggleLabel">Enter Execute Mode</span></button>
-        <button class="btn btn-secondary" id="installBtn"><span>⬇️</span><span>Install App</span></button>
-      </div>
-      <div class="utility-row">
-        <div class="progress-wrap">
-          <div class="progress-meta"><span id="progressLabel">Day Progress</span><span id="progressPercent">0%</span></div>
-          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+        <div class="row">
+          <div class="controls">
+            <button class="btn btn-primary" id="executeToggle">Enter Execute Mode</button>
+            <button class="btn btn-secondary" id="todayBtn">Jump to Today</button>
+            <button class="btn btn-cyber" id="editBtn">Edit Current Block</button>
+            <button class="btn btn-secondary" id="resetBtn">Reset Day</button>
+          </div>
+          <div class="controls">
+            <button class="btn btn-secondary" id="soundBtn">Sound: Off</button>
+            <button class="btn btn-secondary" id="exportBtn">Export Data</button>
+          </div>
         </div>
-        <button class="btn sound-toggle" id="jumpNowBtn">Jump to Now</button>
-      </div>
-      <div class="meta">
-        <div id="currentDateText">Schedule</div>
-        <div id="summaryText">Loading daily flow…</div>
-      </div>
-      <div class="days-nav" id="daysNav"></div>
-    </div>
 
-    <div class="content" id="scrollArea">
-      <div class="execute-panel glass" id="executePanel">
-        <div class="execute-head">
-          <div class="execute-title">Execute Mode</div>
-          <div class="timer" id="timerText">Current block</div>
+        <div class="progressCard">
+          <div class="progressMeta">
+            <span id="progressLabel">Day Progress</span>
+            <span id="progressText">0%</span>
+          </div>
+          <div class="progressTrack"><div class="progressFill" id="progressFill"></div></div>
         </div>
-        <div class="execute-card" id="executeCard"></div>
+
+        <div class="row" style="color: var(--muted); font-size: 12px;">
+          <div id="dateLabel">Today</div>
+          <div id="summaryLabel">Loading…</div>
+        </div>
+
+        <div class="tabs" id="dayTabs"></div>
       </div>
 
-      <div class="section-row">
-        <span id="sectionDayLabel">Full Day Schedule</span>
-        <span id="dayRange">6:30 AM → 10:30 PM</span>
-      </div>
+      <div class="body">
+        <div class="main" id="mainCol">
+          <div class="execute glass" id="executePanel">
+            <div class="executeHead">
+              <div class="eyebrow" style="margin:0">Execute Mode</div>
+              <div class="timer" id="timerText">Current Block</div>
+            </div>
+            <div class="executeCard" id="executeCard"></div>
+          </div>
 
-      <div class="schedule" id="schedule"></div>
+          <div class="panel glass">
+            <div class="stats">
+              <div class="stat">
+                <div class="statLabel">Current Block</div>
+                <div class="statValue" id="statCurrent">—</div>
+                <div class="statSub" id="statCurrentSub">No active task</div>
+              </div>
+              <div class="stat">
+                <div class="statLabel">Mode</div>
+                <div class="statValue" id="statMode">Hybrid</div>
+                <div class="statSub">Strict guidance with flexible overrides</div>
+              </div>
+              <div class="stat">
+                <div class="statLabel">Edit State</div>
+                <div class="statValue" id="statEdit">Editable</div>
+                <div class="statSub">Local save enabled for this browser</div>
+              </div>
+              <div class="stat">
+                <div class="statLabel">Theme</div>
+                <div class="statValue" id="statTheme">Cyber Lux</div>
+                <div class="statSub">Black, gold, cyan command aesthetic</div>
+              </div>
+            </div>
+          </div>
 
-      <div class="floating-nav">
-        <div class="floating-inner glass">
-          <button class="mini active" id="viewFullBtn">Full Day</button>
-          <button class="mini" id="viewExecuteBtn">Execute</button>
+          <div class="sectionHead">
+            <span id="sectionTitle">Monday Schedule</span>
+            <span id="sectionRange">6:30 AM → 10:30 PM</span>
+          </div>
+
+          <div class="schedule" id="schedule"></div>
+
+          <div class="footerNav">
+            <div class="footerInner glass">
+              <button class="mini active" id="viewFull">Full Day</button>
+              <button class="mini" id="viewExecute">Execute</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <div class="panel glass">
+            <div class="eyebrow">System Modes</div>
+            <div class="modeGrid">
+              <div class="toggleCard">
+                <strong>Execution Style</strong>
+                <p>Hybrid by default. Strict guidance while preserving override access.</p>
+                <div class="switch" id="execSwitch">
+                  <button data-mode="strict">Strict</button>
+                  <button data-mode="hybrid" class="active">Hybrid</button>
+                  <button data-mode="flex">Flex</button>
+                </div>
+              </div>
+              <div class="toggleCard">
+                <strong>Task Control</strong>
+                <p>Preloaded system with user editing. Your changes save locally on this machine.</p>
+                <div class="switch" id="editSwitch">
+                  <button data-edit="locked">System</button>
+                  <button data-edit="both" class="active">Both</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel glass">
+            <div class="eyebrow">Branch Identity</div>
+            <div class="branchGrid">
+              <div class="branchCard"><strong style="color:#b8d1ff">Charis Machaira</strong><span>Steel blue discipline, breath, reflection, and nightly alignment.</span></div>
+              <div class="branchCard"><strong style="color:#e67a85">The Game</strong><span>Crimson creative energy for content, systems, narrative, and avatar production.</span></div>
+              <div class="branchCard"><strong style="color:#63d89f">Terraform</strong><span>Emerald structure for city logic, systems design, and regenerative planning.</span></div>
+              <div class="branchCard"><strong style="color:#cba57b">Bull Jackson</strong><span>Earth-toned food, product quality, and grounded production economics.</span></div>
+              <div class="branchCard"><strong style="color:#f1d18c">Real Estate</strong><span>Gold wealth-building, deal analysis, market study, and asset movement.</span></div>
+              <div class="branchCard"><strong style="color:#eef2f7">Decus OS</strong><span>Silver-white orchestration, scheduling, system refinement, and command flow.</span></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-<script>
-const BRANCH_COLORS = {
-  "Charis Machaira": { accent:"#7f9fcb", accent2:"#b8d1ff", soft:"rgba(127,159,203,.16)", line:"rgba(127,159,203,.24)", glow:"rgba(127,159,203,.18)" },
-  "The Game": { accent:"#a8424c", accent2:"#e67a85", soft:"rgba(168,66,76,.16)", line:"rgba(168,66,76,.24)", glow:"rgba(168,66,76,.18)" },
-  "Terraform": { accent:"#2f8a64", accent2:"#63d89f", soft:"rgba(47,138,100,.16)", line:"rgba(47,138,100,.24)", glow:"rgba(47,138,100,.18)" },
-  "Bull Jackson": { accent:"#8d6b48", accent2:"#cba57b", soft:"rgba(141,107,72,.16)", line:"rgba(141,107,72,.24)", glow:"rgba(141,107,72,.18)" },
-  "Real Estate": { accent:"#d6b36a", accent2:"#f1d18c", soft:"rgba(214,179,106,.16)", line:"rgba(214,179,106,.24)", glow:"rgba(214,179,106,.18)" },
-  "Decus OS": { accent:"#b7c0c8", accent2:"#eef2f7", soft:"rgba(183,192,200,.16)", line:"rgba(183,192,200,.24)", glow:"rgba(183,192,200,.16)" }
-};
-const dayDisplay = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-const baseMorning = [
-  { start:"06:30", end:"07:10", title:"Meditation / Prayer", category:"Charis", branch:"Charis Machaira", summary:"User-led morning stillness, prayer, breath, and internal grounding.", notes:"This block is intentionally yours.", steps:["Begin in silence.","Choose your own meditation anchor, prayer, or breath rhythm.","End by identifying one word or virtue for the day."] },
-  { start:"07:10", end:"07:20", title:"Brush + Face Reset", category:"Hygiene", branch:"Decus OS", summary:"Brush teeth, rinse face with cold water, and wake the system up.", notes:"Move with intent and avoid drifting into your phone.", steps:["Brush teeth thoroughly.","Cold water face rinse.","Prepare shaving area."] },
-  { start:"07:20", end:"07:30", title:"Shave + Grooming", category:"Hygiene", branch:"Decus OS", summary:"Simple grooming with calm focus.", notes:"Clean lines, steady pace.", steps:["Shave or groom.","Rinse and clean tools quickly.","Dress in workout-ready clothes."] },
-  { start:"07:30", end:"08:20", title:"Workout + Breathwork", category:"Fitness", branch:"Charis Machaira", summary:"Bodyweight strength, core, and breathwork sequence.", notes:"Move steadily and safely.", steps:["Warmup: pushups, squats, plank.","Strength: pushups and squats in rounds.","Core finisher.","Breathwork reset."] },
-  { start:"08:20", end:"09:00", title:"Breakfast + Readiness", category:"Meal", branch:"Bull Jackson", summary:"Fuel, clean up, and prepare for deep work.", notes:"Default meal: protein-focused bowl and water.", steps:["Eat a simple protein-focused meal.","Drink water.","Clean up and prepare workspace."] }
-];
-const mondayRemainder = [
-  { start:"09:00", end:"12:00", title:"Deep Work — Real Estate Analysis", category:"Real Estate", branch:"Real Estate", summary:"Property research, analysis, and deal logging.", notes:"Income-oriented branch work.", steps:["Open listings platform and notes doc.","Analyze six candidate properties.","Log insights and top two deals."] },
-  { start:"12:00", end:"13:00", title:"Lunch + Reset", category:"Meal", branch:"Bull Jackson", summary:"Midday fuel and brief recovery.", notes:"Keep it simple and repeatable.", steps:["Prepare or purchase lunch.","Walk or stand.","Review top follow-ups for calls."] },
-  { start:"13:00", end:"15:00", title:"Recruitment / Sales / Retention Calls", category:"Sales", branch:"Decus OS", summary:"Active money block with outbound calls and follow-ups.", notes:"Split time across recruitment, customer sales, and customer retention.", steps:["Call agent prospects.","Call customer leads.","Call or text retention contacts.","Log outcomes and next steps."] },
-  { start:"15:00", end:"17:00", title:"AI Avatar Skill + Content Build", category:"Content", branch:"The Game", summary:"Tutorial, avatar creation, script writing, and short-form output.", notes:"Build one usable content asset.", steps:["Open tool and tutorial.","Create one avatar draft.","Write short script.","Generate or plan first video."] },
-  { start:"17:00", end:"18:00", title:"Dinner + Meal Check", category:"Meal", branch:"Bull Jackson", summary:"Dinner, cleanup, and purchase check.", notes:"Note if more ingredients or meals are needed.", steps:["Prepare dinner.","Eat slowly.","Clean the space.","Write any purchase note."] },
-  { start:"18:00", end:"20:00", title:"Branch Micro Tasks + Yacht Income Research", category:"Branch Build", branch:"Decus OS", summary:"Brand ideas, yacht-related business research, and small branch actions.", notes:"Keep each task concrete and small.", steps:["Generate 3 brand or offer ideas.","Research yacht brokerage or charter models.","Complete one Decus branch micro-task."] },
-  { start:"20:00", end:"21:00", title:"Light Learning + Admin", category:"Learning", branch:"Decus OS", summary:"Low-energy educational content and light digital cleanup.", notes:"Avoid random wandering.", steps:["Choose one useful long-form item.","Handle easy admin.","Write one reflection note."] },
-  { start:"21:00", end:"22:20", title:"Wind-Down Sequence", category:"Night", branch:"Charis Machaira", summary:"Stretch, reduce screens, and prepare for sleep.", notes:"The goal is sleep quality.", steps:["Dim lights.","Stretch gently.","Reduce screens.","Prepare room and body for sleep."] },
-  { start:"22:20", end:"22:30", title:"Final 10-Minute Ritual", category:"Night", branch:"Charis Machaira", summary:"User-controlled closing ritual.", notes:"This is your space.", steps:["Complete your own final ritual.","End device interaction.","Lights out at 10:30 PM."] }
-];
-const mondaySchedule = [...baseMorning, ...mondayRemainder];
-function clone(x){ return JSON.parse(JSON.stringify(x)); }
-function mapSchedule(schedule, dayTitle, branch){
-  return schedule.map(item => {
-    const copy = clone(item);
-    if (item.start >= "09:00" && item.start < "12:00") { copy.title = `Deep Work — ${dayTitle}`; copy.branch = branch; copy.category = dayTitle; copy.summary = `Morning build block focused on ${dayTitle}.`; }
-    return copy;
-  });
-}
-function createSaturdaySchedule(){
-  const out = baseMorning.slice(0,3).map(clone);
-  let minute = 450; // 7:30
-  while(minute < 1260){
-    const s = `${String(Math.floor(minute/60)).padStart(2,"0")}:${String(minute%60).padStart(2,"0")}`;
-    const em = minute+30;
-    const e = `${String(Math.floor(em/60)).padStart(2,"0")}:${String(em%60).padStart(2,"0")}`;
-    out.push({ start:s, end:e, title:"Open Flex Time", category:"Open", branch:"Decus OS", summary:"Saturday remains open until the nightly ritual sequence.", notes:"Use this space for rest, errands, family, creation, recovery, or spontaneous work.", steps:["Choose what feels most needed right now.","Stay aligned, but do not force structure.","Capture one useful thought if it helps."] });
-    minute = em;
-  }
-  out.push(
-    { start:"21:00", end:"22:20", title:"Wind-Down Sequence", category:"Night", branch:"Charis Machaira", summary:"Saturday still closes with intention.", notes:"Ease down gradually.", steps:["Dim lights.","Stretch and breathe.","Reduce screens.","Prepare for sleep."] },
-    { start:"22:20", end:"22:30", title:"Final 10-Minute Ritual", category:"Night", branch:"Charis Machaira", summary:"User-controlled closing ritual.", notes:"This is your space.", steps:["Complete your final ritual.","End device interaction.","Lights out at 10:30 PM."] }
-  );
-  return out;
-}
-const schedules = {
-  0: mondaySchedule,
-  1: mapSchedule(mondaySchedule, "The Game", "The Game"),
-  2: mapSchedule(mondaySchedule, "Terraform", "Terraform"),
-  3: mapSchedule(mondaySchedule, "Bull Jackson", "Bull Jackson"),
-  4: mapSchedule(mondaySchedule, "Decus OS", "Decus OS"),
-  5: createSaturdaySchedule(),
-  6: mapSchedule(mondaySchedule, "Weekly Reset", "Charis Machaira")
-};
-function toMinutes(hhmm){ const [h,m] = hhmm.split(":").map(Number); return h*60+m; }
-function formatTime(hhmm){ let [h,m]=hhmm.split(":").map(Number); const suffix=h>=12?"PM":"AM"; let hour=h%12; if(hour===0) hour=12; return `${hour}:${String(m).padStart(2,"0")} ${suffix}`; }
-function rangeLabel(start,end){ return `${formatTime(start)} → ${formatTime(end)}`; }
-const defaultDayIndex = (() => { const d = new Date().getDay(); return d===0 ? 6 : d-1; })();
-let selectedDayIndex = defaultDayIndex, executeMode = false, expandedIndex = null, deferredPrompt = null;
-const root = document.documentElement, daysNav = document.getElementById("daysNav"), scheduleEl = document.getElementById("schedule"),
-executePanel = document.getElementById("executePanel"), executeCard = document.getElementById("executeCard"), executeToggleBtn = document.getElementById("executeToggleBtn"),
-executeToggleLabel = document.getElementById("executeToggleLabel"), timerText = document.getElementById("timerText"), jumpNowBtn = document.getElementById("jumpNowBtn"),
-summaryText = document.getElementById("summaryText"), currentDateText = document.getElementById("currentDateText"), liveStatus = document.getElementById("liveStatus"),
-viewFullBtn = document.getElementById("viewFullBtn"), viewExecuteBtn = document.getElementById("viewExecuteBtn"), dayRange = document.getElementById("dayRange"),
-sectionDayLabel = document.getElementById("sectionDayLabel"), progressFill = document.getElementById("progressFill"), progressPercent = document.getElementById("progressPercent"),
-installBtn = document.getElementById("installBtn");
-function getSchedule(){ return schedules[selectedDayIndex] || []; }
-function getBranchColors(branch){ return BRANCH_COLORS[branch] || BRANCH_COLORS["Decus OS"]; }
-function applyTheme(branch){
-  const c = getBranchColors(branch);
-  root.style.setProperty("--accent", c.accent); root.style.setProperty("--accent-2", c.accent2);
-  root.style.setProperty("--accent-soft", c.soft); root.style.setProperty("--accent-line", c.line); root.style.setProperty("--accent-glow", c.glow);
-}
-function isTodaySelected(){ return selectedDayIndex === defaultDayIndex; }
-function getNowMinutes(){ const now = new Date(); return now.getHours()*60 + now.getMinutes(); }
-function getCurrentBlockIndex(schedule){ const nowM = getNowMinutes(); return schedule.findIndex(item => nowM >= toMinutes(item.start) && nowM < toMinutes(item.end)); }
-function getCurrentBlockForSelectedDay(){ const schedule=getSchedule(); if (!isTodaySelected()) return -1; return getCurrentBlockIndex(schedule); }
-function getTimeUntilBlockEnd(item){
-  const now = new Date(); const endMins = toMinutes(item.end); const nowMins = now.getHours()*60 + now.getMinutes();
-  let totalSec = (endMins - nowMins) * 60 - now.getSeconds(); if (totalSec < 0) totalSec = 0;
-  return { mins: Math.floor(totalSec/60), seconds: totalSec%60 };
-}
-function renderDaysNav(){
-  daysNav.innerHTML = "";
-  dayDisplay.forEach((label, idx) => {
-    const btn = document.createElement("button"); btn.className = `day-btn ${idx===selectedDayIndex ? "active":""}`; btn.textContent = label;
-    btn.onclick = () => { selectedDayIndex = idx; expandedIndex = null; renderAll(); };
-    daysNav.appendChild(btn);
-  });
-}
-function renderProgress(){
-  const schedule = getSchedule(); const start=toMinutes(schedule[0].start), end=toMinutes(schedule[schedule.length-1].end), now=getNowMinutes();
-  let p = 0; if (isTodaySelected()) { if (now<=start) p=0; else if (now>=end) p=100; else p=((now-start)/(end-start))*100; }
-  progressFill.style.width = `${p}%`; progressPercent.textContent = `${Math.round(p)}%`;
-}
-function renderSchedule(){
-  const schedule = getSchedule(); const currentIndex = getCurrentBlockForSelectedDay(); scheduleEl.innerHTML = "";
-  schedule.forEach((item, index) => {
-    const colors = getBranchColors(item.branch);
-    const block = document.createElement("div"); block.className = `block glass ${index===currentIndex?"current":""} ${expandedIndex===index?"expanded":""}`;
-    block.style.setProperty("--block-accent", colors.accent);
-    const btn = document.createElement("button"); btn.className = "block-btn";
-    btn.innerHTML = `<div class="block-top"><div class="time-wrap"><div class="time">${rangeLabel(item.start,item.end)}</div><div class="duration">${toMinutes(item.end)-toMinutes(item.start)} minutes</div></div><div class="block-main"><div class="task">${item.title}</div><p class="summary">${item.summary}</p></div><div class="chip">${item.branch}</div></div>`;
-    btn.onclick = () => { expandedIndex = expandedIndex===index ? null : index; renderSchedule(); renderExecutePanel(); };
-    const details = document.createElement("div"); details.className = "block-details";
-    details.innerHTML = `<div class="divider"></div><p class="details-notes">${item.notes || ""}</p><ul class="steps">${item.steps.map((step,idx)=>`<li class="step"><span class="step-index">${idx+1}</span><span>${step}</span></li>`).join("")}</ul>`;
-    block.appendChild(btn); block.appendChild(details); scheduleEl.appendChild(block);
-  });
-  if (currentIndex >= 0) {
-    const item = schedule[currentIndex];
-    summaryText.textContent = `Now: ${item.title} • ${rangeLabel(item.start,item.end)}`;
-    liveStatus.textContent = "Live Now";
-    applyTheme(item.branch);
-  } else {
-    summaryText.textContent = isTodaySelected() ? "Outside active schedule window" : `Previewing ${dayNames[selectedDayIndex]}`;
-    liveStatus.textContent = isTodaySelected() ? "Standby" : "Preview";
-    applyTheme(schedule[0]?.branch || "Decus OS");
-  }
-  currentDateText.textContent = isTodaySelected() ? new Date().toLocaleDateString(undefined, {weekday:"long", month:"long", day:"numeric"}) : `${dayNames[selectedDayIndex]} Schedule`;
-  sectionDayLabel.textContent = `${dayNames[selectedDayIndex]} Schedule`;
-  dayRange.textContent = `${formatTime(schedule[0].start)} → ${formatTime(schedule[schedule.length-1].end)}`;
-  renderProgress();
-}
-function renderExecutePanel(){
-  if(!executeMode){ executePanel.classList.remove("active"); return; }
-  executePanel.classList.add("active");
-  const schedule=getSchedule(), currentIndex=getCurrentBlockForSelectedDay();
-  if(currentIndex < 0){
-    executeCard.innerHTML = `<div class="execute-time">${isTodaySelected()?"Standby":"Preview Mode"}</div><div class="execute-task">${isTodaySelected()?"No active block right now":"Selected day preview"}</div><div class="execute-notes">${isTodaySelected()?"The live schedule runs from 6:30 AM to 10:30 PM.":"Switch back to today for live countdown timing."}</div>`;
-    timerText.textContent = isTodaySelected() ? "Outside schedule" : "Preview only";
-    return;
-  }
-  const item = schedule[currentIndex], cd = getTimeUntilBlockEnd(item);
-  timerText.textContent = `${String(cd.mins).padStart(2,"0")}:${String(cd.seconds).padStart(2,"0")} left`;
-  executeCard.innerHTML = `<div class="execute-time">${rangeLabel(item.start,item.end)} • ${item.branch}</div><div class="execute-task">${item.title}</div><div class="execute-notes">${item.notes || item.summary}</div><ul class="steps">${item.steps.map((step,idx)=>`<li class="step"><span class="step-index">${idx+1}</span><span>${step}</span></li>`).join("")}</ul>`;
-}
-function renderAll(){ renderDaysNav(); renderSchedule(); renderExecutePanel(); viewExecuteBtn.classList.toggle("active", executeMode); viewFullBtn.classList.toggle("active", !executeMode); }
-executeToggleBtn.onclick = () => { executeMode = !executeMode; executeToggleLabel.textContent = executeMode ? "Exit Execute Mode" : "Enter Execute Mode"; renderExecutePanel(); renderAll(); };
-viewFullBtn.onclick = () => { executeMode=false; executeToggleLabel.textContent="Enter Execute Mode"; renderAll(); };
-viewExecuteBtn.onclick = () => { executeMode=true; executeToggleLabel.textContent="Exit Execute Mode"; renderAll(); };
-jumpNowBtn.onclick = () => { selectedDayIndex = defaultDayIndex; renderAll(); document.querySelector(".block.current")?.scrollIntoView({behavior:"smooth",block:"center"}); };
-installBtn.onclick = async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    installBtn.querySelector("span:last-child").textContent = outcome === "accepted" ? "Installed" : "Install App";
-    deferredPrompt = null;
-  } else {
-    alert("If install is available, open this in Chrome or Edge and use the browser’s Install App option.");
-  }
-};
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.querySelector("span:last-child").textContent = "Install App";
-});
-window.addEventListener("appinstalled", () => {
-  deferredPrompt = null;
-  installBtn.querySelector("span:last-child").textContent = "Installed";
-});
-if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js"));
-renderAll(); setInterval(() => { renderSchedule(); renderExecutePanel(); }, 1000);
-</script>
+
+  <div class="modalWrap" id="modalWrap">
+    <div class="modal glass">
+      <div class="row" style="margin-bottom: 12px;">
+        <div>
+          <div class="eyebrow">Edit Block</div>
+          <div style="font-size: 24px; font-weight: 800; letter-spacing: -.03em;">Current Schedule Item</div>
+        </div>
+        <button class="btn btn-secondary" id="closeModal">Close</button>
+      </div>
+      <div class="modalGrid">
+        <div class="field"><label>Title</label><input id="fieldTitle" /></div>
+        <div class="row">
+          <div class="field" style="flex:1"><label>Start</label><input id="fieldStart" /></div>
+          <div class="field" style="flex:1"><label>End</label><input id="fieldEnd" /></div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1"><label>Category</label><input id="fieldCategory" /></div>
+          <div class="field" style="flex:1"><label>Branch</label>
+            <select id="fieldBranch">
+              <option>Charis Machaira</option>
+              <option>The Game</option>
+              <option>Terraform</option>
+              <option>Bull Jackson</option>
+              <option>Real Estate</option>
+              <option>Decus OS</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>Summary</label><textarea id="fieldSummary"></textarea></div>
+        <div class="field"><label>Notes</label><textarea id="fieldNotes"></textarea></div>
+        <div class="field"><label>Steps (one per line)</label><textarea id="fieldSteps"></textarea></div>
+        <div class="row">
+          <button class="btn btn-primary" id="saveBlock">Save Changes</button>
+          <button class="btn btn-secondary" id="cancelBlock">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BRANCH = {
+      "Charis Machaira": { accent: "#7f9fcb", accent2: "#b8d1ff", soft: "rgba(127,159,203,.16)" },
+      "The Game": { accent: "#a8424c", accent2: "#e67a85", soft: "rgba(168,66,76,.16)" },
+      "Terraform": { accent: "#2f8a64", accent2: "#63d89f", soft: "rgba(47,138,100,.16)" },
+      "Bull Jackson": { accent: "#8d6b48", accent2: "#cba57b", soft: "rgba(141,107,72,.16)" },
+      "Real Estate": { accent: "#d6b36a", accent2: "#f1d18c", soft: "rgba(214,179,106,.16)" },
+      "Decus OS": { accent: "#b7c0c8", accent2: "#eef2f7", soft: "rgba(183,192,200,.16)" },
+    };
+    const DAY_LABELS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    const DAY_NAMES = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    const STORAGE_KEY = "decus-os-v2-data";
+    const PREF_KEY = "decus-os-v2-prefs";
+
+    const morning = [
+      {start:"06:30",end:"07:10",title:"Meditation / Prayer",category:"Charis",branch:"Charis Machaira",summary:"User-led morning stillness, prayer, breath, and internal grounding.",notes:"This block is intentionally yours.",steps:["Begin in silence.","Choose your own meditation anchor or prayer.","End with one word for the day."]},
+      {start:"07:10",end:"07:20",title:"Brush + Face Reset",category:"Hygiene",branch:"Decus OS",summary:"Brush teeth and rinse face with cold water.",notes:"Keep it efficient.",steps:["Brush thoroughly.","Cold rinse face and neck.","Prepare for grooming."]},
+      {start:"07:20",end:"07:30",title:"Shave + Grooming",category:"Hygiene",branch:"Decus OS",summary:"Simple grooming with calm focus.",notes:"No rushing.",steps:["Shave or trim.","Clean tools.","Dress for workout."]},
+      {start:"07:30",end:"08:20",title:"Workout + Breathwork",category:"Fitness",branch:"Charis Machaira",summary:"Warmup, strength, core, and breathing reset.",notes:"Move cleanly and stay intentional.",steps:["20 pushups, 20 squats, 30-second plank x2.","Pushups x15 and squats x20 for volume.","1-minute plank and sit-ups.","30-breath Wim Hof-style cycle x3."]},
+      {start:"08:20",end:"09:00",title:"Fuel + Readiness",category:"Meal",branch:"Bull Jackson",summary:"Eat, hydrate, clean up, and prepare for the first deep block.",notes:"Default meal: rice, chicken, beans, fajita veggies, cheese, water.",steps:["Eat a simple protein-focused meal.","Clean up quickly.","Set water and desk readiness."]}
+    ];
+
+    const monday = [
+      ...morning,
+      {start:"09:00",end:"12:00",title:"Real Estate Deep Work",category:"Real Estate",branch:"Real Estate",summary:"Analyze deals, compare listings, and grow asset judgment.",notes:"This block should end with ranked properties and notes for tomorrow.",steps:["Open listings and deal notes.","Record at least 6 candidate properties.","Estimate rent and compare value.","Log your top 2 opportunities."]},
+      {start:"12:00",end:"13:00",title:"Lunch + Reset",category:"Meal",branch:"Bull Jackson",summary:"Eat, walk, hydrate, and reset before calls.",notes:"Keep the break restorative, not distracting.",steps:["Eat lunch.","Walk or stand.","Review priority contacts."]},
+      {start:"13:00",end:"15:00",title:"Recruitment / Sales / Retention",category:"Sales",branch:"Decus OS",summary:"Money block for outbound calls, follow-ups, and relationship maintenance.",notes:"This is a core non-negotiable.",steps:["Recruit agents.","Call sales leads.","Follow up with customers.","Log outcomes and next actions."]},
+      {start:"15:00",end:"17:00",title:"AI Avatar Skill Build",category:"Content",branch:"The Game",summary:"Learn, test, and improve avatar video workflow.",notes:"Use HeyGen, Runway, or similar tools.",steps:["Watch a short tutorial.","Create or refine one avatar.","Write a short script.","Generate a test video and review it."]},
+      {start:"17:00",end:"18:00",title:"Dinner + Purchase Check",category:"Meal",branch:"Bull Jackson",summary:"Prepare dinner, eat, and check whether new meals or ingredients are needed.",notes:"Keep food decisions simple.",steps:["Prepare or buy dinner.","Eat calmly.","Write next purchase note if needed.","Clean the space."]},
+      {start:"18:00",end:"20:00",title:"Branch Micro Tasks + Yacht Income Research",category:"Branch Build",branch:"Decus OS",summary:"Advance small branch actions and research monetizable yacht pathways.",notes:"Focus on tiny but meaningful progress.",steps:["Write 3 brand or offer ideas.","Research yacht brokerage or charter models.","Complete one Decus branch micro task.","Capture one content idea."]},
+      {start:"20:00",end:"21:00",title:"Light Learning + Admin",category:"Learning",branch:"Decus OS",summary:"Low-energy productive state.",notes:"Stay useful without overloading your mind.",steps:["Consume one useful piece of content.","Handle easy admin.","Write a short reflection note."]},
+      {start:"21:00",end:"22:20",title:"Wind-Down Sequence",category:"Night",branch:"Charis Machaira",summary:"Dim lights, stretch, reduce screens, and prepare for sleep.",notes:"This protects sleep quality.",steps:["Dim lights.","Stretch or breathe.","Reduce screens.","Prepare the room."]},
+      {start:"22:20",end:"22:30",title:"Final 10-Minute Ritual",category:"Night",branch:"Charis Machaira",summary:"User-controlled closing ritual.",notes:"This remains yours.",steps:["Complete your final ritual.","End device interaction.","Lights out at 10:30."]}
+    ];
+
+    function clone(v){ return JSON.parse(JSON.stringify(v)); }
+    function mapDay(base, branch, title){
+      return base.map(item => {
+        const x = clone(item);
+        if (item.start >= "09:00" && item.start < "12:00") {
+          x.branch = branch;
+          x.category = title;
+          x.title = `${title} Deep Work`;
+          x.summary = `Advance ${title} through structured morning deep work.`;
+          x.notes = `This is the primary morning build block for ${title}.`;
+          x.steps = [`Open ${title} notes or tools.`,`Choose one concrete target.`,`Advance it with focused effort.`,`Log what changed and the next step.`];
+        }
+        return x;
+      });
+    }
+    function saturday(){
+      const arr = [morning[0], morning[1], morning[2]];
+      let mins = 450; // 07:30
+      while (mins < 1260) {
+        const s = `${String(Math.floor(mins/60)).padStart(2,"0")}:${String(mins%60).padStart(2,"0")}`;
+        const eM = mins + 10;
+        const e = `${String(Math.floor(eM/60)).padStart(2,"0")}:${String(eM%60).padStart(2,"0")}`;
+        arr.push({start:s,end:e,title:"Open Flex Time",category:"Open",branch:"Decus OS",summary:"Saturday stays open until nightly rituals.",notes:"Use this space for rest, errands, creation, recovery, or spontaneous work.",steps:["Choose what feels most needed.","Stay aligned without forcing structure.","Capture one useful thought if helpful."]});
+        mins = eM;
+      }
+      arr.push({start:"21:00",end:"22:20",title:"Wind-Down Sequence",category:"Night",branch:"Charis Machaira",summary:"Saturday still closes with intention.",notes:"Ease down gradually.",steps:["Dim lights.","Stretch or breathe.","Reduce screens.","Prepare for bed."]});
+      arr.push({start:"22:20",end:"22:30",title:"Final 10-Minute Ritual",category:"Night",branch:"Charis Machaira",summary:"User-controlled closing ritual.",notes:"This remains yours.",steps:["Complete your ritual.","End device interaction.","Lights out at 10:30."]});
+      return arr;
+    }
+
+    const defaultData = {
+      days: [
+        monday,
+        mapDay(monday, "The Game", "The Game"),
+        mapDay(monday, "Terraform", "Terraform"),
+        mapDay(monday, "Bull Jackson", "Bull Jackson"),
+        mapDay(monday, "Decus OS", "Decus OS"),
+        saturday(),
+        mapDay(monday, "Charis Machaira", "Weekly Reset")
+      ]
+    };
+
+    function toMinutes(t){ const [h,m] = t.split(":").map(Number); return h*60+m; }
+    function formatTime(t){ let [h,m] = t.split(":").map(Number); const s = h >= 12 ? "PM" : "AM"; let hour = h % 12; if (!hour) hour = 12; return `${hour}:${String(m).padStart(2,"0")} ${s}`; }
+    function range(a,b){ return `${formatTime(a)} → ${formatTime(b)}`; }
+    function todayIndex(){ const d = new Date().getDay(); return d === 0 ? 6 : d - 1; }
+
+    let prefs = loadPrefs();
+    let db = loadData();
+    let selectedDay = todayIndex();
+    let expanded = null;
+    let executeMode = false;
+    let soundOn = prefs.soundOn || false;
+    let editMode = prefs.editMode || "both";
+    let execStyle = prefs.execStyle || "hybrid";
+    let editIndex = null;
+    let audioCtx = null;
+
+    const els = {
+      dayTabs: q("#dayTabs"), schedule: q("#schedule"), executePanel: q("#executePanel"), executeCard: q("#executeCard"),
+      timerText: q("#timerText"), executeToggle: q("#executeToggle"), todayBtn: q("#todayBtn"), liveText: q("#liveText"),
+      progressFill: q("#progressFill"), progressText: q("#progressText"), progressLabel: q("#progressLabel"),
+      dateLabel: q("#dateLabel"), summaryLabel: q("#summaryLabel"), sectionTitle: q("#sectionTitle"), sectionRange: q("#sectionRange"),
+      statCurrent: q("#statCurrent"), statCurrentSub: q("#statCurrentSub"), statMode: q("#statMode"), statEdit: q("#statEdit"),
+      soundBtn: q("#soundBtn"), exportBtn: q("#exportBtn"), resetBtn: q("#resetBtn"), viewFull: q("#viewFull"), viewExecute: q("#viewExecute"),
+      editBtn: q("#editBtn"), modalWrap: q("#modalWrap"), closeModal: q("#closeModal"), saveBlock: q("#saveBlock"), cancelBlock: q("#cancelBlock"),
+      fieldTitle: q("#fieldTitle"), fieldStart: q("#fieldStart"), fieldEnd: q("#fieldEnd"), fieldCategory: q("#fieldCategory"), fieldBranch: q("#fieldBranch"), fieldSummary: q("#fieldSummary"), fieldNotes: q("#fieldNotes"), fieldSteps: q("#fieldSteps")
+    };
+
+    setupSwitches();
+    bind();
+    render();
+    setInterval(() => renderClock(), 1000);
+
+    function q(s){ return document.querySelector(s); }
+    function loadData(){
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || clone(defaultData); }
+      catch { return clone(defaultData); }
+    }
+    function saveData(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+    function loadPrefs(){
+      try { return JSON.parse(localStorage.getItem(PREF_KEY)) || {}; }
+      catch { return {}; }
+    }
+    function savePrefs(){ localStorage.setItem(PREF_KEY, JSON.stringify({ soundOn, editMode, execStyle })); }
+    function currentDayData(){ return db.days[selectedDay] || []; }
+    function isTodaySelected(){ return selectedDay === todayIndex(); }
+    function currentIndex(){
+      if (!isTodaySelected()) return -1;
+      const now = new Date();
+      const mins = now.getHours()*60 + now.getMinutes();
+      return currentDayData().findIndex(x => mins >= toMinutes(x.start) && mins < toMinutes(x.end));
+    }
+    function currentItem(){ const i = currentIndex(); return i >= 0 ? currentDayData()[i] : null; }
+    function applyTheme(branch){
+      const c = BRANCH[branch] || BRANCH["Decus OS"];
+      document.documentElement.style.setProperty("--cyan", c.accent);
+      document.documentElement.style.setProperty("--cyan2", c.accent2);
+      document.documentElement.style.setProperty("--accentSoft", c.soft);
+    }
+    function render(){ renderTabs(); renderClock(); renderSchedule(); renderSidebarState(); }
+    function renderTabs(){
+      els.dayTabs.innerHTML = DAY_LABELS.map((d,i) => `<button class="tab ${i===selectedDay?'active':''}" data-day="${i}">${d}</button>`).join("");
+      els.dayTabs.querySelectorAll(".tab").forEach(btn => btn.onclick = () => { selectedDay = +btn.dataset.day; expanded = null; beep(560,.02,.04); render(); });
+    }
+    function renderClock(){
+      const day = currentDayData();
+      const cur = currentIndex();
+      const item = cur >= 0 ? day[cur] : null;
+      const primary = item?.branch || (selectedDay===0?"Real Estate":selectedDay===1?"The Game":selectedDay===2?"Terraform":selectedDay===3?"Bull Jackson":selectedDay===6?"Charis Machaira":"Decus OS");
+      applyTheme(primary);
+
+      if (item) {
+        els.liveText.textContent = "Live Now";
+        els.summaryLabel.textContent = `Now: ${item.title} • ${range(item.start,item.end)}`;
+        els.statCurrent.textContent = item.title.length > 15 ? item.title.slice(0,15)+"…" : item.title;
+        els.statCurrentSub.textContent = item.branch;
+      } else {
+        els.liveText.textContent = isTodaySelected() ? "Standby" : "Preview";
+        els.summaryLabel.textContent = isTodaySelected() ? "Outside active schedule window" : `Previewing ${DAY_NAMES[selectedDay]}`;
+        els.statCurrent.textContent = "—";
+        els.statCurrentSub.textContent = isTodaySelected() ? "No active task" : `${DAY_NAMES[selectedDay]} selected`;
+      }
+
+      els.dateLabel.textContent = isTodaySelected() ? new Date().toLocaleDateString(undefined, { weekday:"long", month:"long", day:"numeric" }) : `${DAY_NAMES[selectedDay]} Schedule`;
+      els.sectionTitle.textContent = `${DAY_NAMES[selectedDay]} Schedule`;
+      if (day.length) els.sectionRange.textContent = range(day[0].start, day[day.length-1].end);
+
+      const progress = calcProgress(day);
+      els.progressFill.style.width = `${progress}%`;
+      els.progressText.textContent = `${Math.round(progress)}%`;
+      els.progressLabel.textContent = isTodaySelected() ? "Day Progress" : "Preview Progress";
+      els.executeToggle.textContent = executeMode ? "Exit Execute Mode" : "Enter Execute Mode";
+      els.soundBtn.textContent = `Sound: ${soundOn ? 'On' : 'Off'}`;
+      renderExecute();
+    }
+    function calcProgress(day){
+      if (!day.length || !isTodaySelected()) return 0;
+      const start = toMinutes(day[0].start), end = toMinutes(day[day.length-1].end);
+      const now = new Date(); const mins = now.getHours()*60 + now.getMinutes();
+      if (mins <= start) return 0; if (mins >= end) return 100;
+      return ((mins-start)/(end-start))*100;
+    }
+    function renderSchedule(){
+      const cur = currentIndex();
+      els.schedule.innerHTML = currentDayData().map((item, i) => {
+        const c = BRANCH[item.branch] || BRANCH["Decus OS"];
+        return `
+          <div class="block glass ${i===cur?'current':''} ${i===expanded?'expanded':''}" style="--blockAccent:${c.accent};--blockAccentSoft:${c.soft}">
+            <button class="blockBtn" data-index="${i}">
+              <div class="blockTop">
+                <div>
+                  <div class="time">${range(item.start,item.end)}</div>
+                  <div class="duration">${toMinutes(item.end)-toMinutes(item.start)} minutes</div>
+                </div>
+                <div>
+                  <div class="task">${escapeHtml(item.title)}</div>
+                  <div class="summary">${escapeHtml(item.summary)}</div>
+                </div>
+                <div class="chip">${escapeHtml(item.branch)}</div>
+              </div>
+            </button>
+            <div class="details">
+              <div class="divider"></div>
+              <div class="notes">${escapeHtml(item.notes || '')}</div>
+              <div class="steps">${(item.steps||[]).map((s,idx)=>`<div class="step"><div class="stepIndex">${idx+1}</div><div>${escapeHtml(s)}</div></div>`).join('')}</div>
+            </div>
+          </div>`;
+      }).join("");
+      els.schedule.querySelectorAll(".blockBtn").forEach(btn => btn.onclick = () => {
+        const idx = +btn.dataset.index;
+        expanded = expanded === idx ? null : idx;
+        if (execStyle === 'strict' && currentIndex() >= 0 && idx !== currentIndex()) return;
+        beep(640,.018,.04);
+        renderSchedule();
+      });
+    }
+    function renderExecute(){
+      els.executePanel.classList.toggle("active", executeMode);
+      q("#viewExecute").classList.toggle("active", executeMode);
+      q("#viewFull").classList.toggle("active", !executeMode);
+      if (!executeMode) return;
+      const item = currentItem();
+      if (!item) {
+        els.timerText.textContent = isTodaySelected() ? "Outside Schedule" : "Preview Only";
+        els.executeCard.innerHTML = `<div class="executeRange">${isTodaySelected() ? 'Standby' : DAY_NAMES[selectedDay]}</div><div class="executeTitle">${isTodaySelected() ? 'No active block right now' : 'Selected day preview'}</div><div class="executeNotes">${isTodaySelected() ? 'The live schedule runs from 6:30 AM to 10:30 PM.' : 'Switch back to today for a live countdown.'}</div>`;
+        return;
+      }
+      const now = new Date();
+      let total = (toMinutes(item.end) - (now.getHours()*60 + now.getMinutes()))*60 - now.getSeconds();
+      if (total < 0) total = 0;
+      const mm = String(Math.floor(total/60)).padStart(2,"0");
+      const ss = String(total%60).padStart(2,"0");
+      els.timerText.textContent = `${mm}:${ss} left`;
+      els.executeCard.innerHTML = `
+        <div class="executeRange">${range(item.start,item.end)} • ${escapeHtml(item.branch)}</div>
+        <div class="executeTitle">${escapeHtml(item.title)}</div>
+        <div class="executeNotes">${escapeHtml(item.notes || item.summary)}</div>
+        <div class="steps">${(item.steps||[]).map((s,idx)=>`<div class="step"><div class="stepIndex">${idx+1}</div><div>${escapeHtml(s)}</div></div>`).join('')}</div>`;
+    }
+    function renderSidebarState(){
+      els.statMode.textContent = execStyle === 'strict' ? 'Strict' : execStyle === 'flex' ? 'Flex' : 'Hybrid';
+      els.statEdit.textContent = editMode === 'locked' ? 'System' : 'Editable';
+      qAll('#execSwitch button').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === execStyle));
+      qAll('#editSwitch button').forEach(btn => btn.classList.toggle('active', btn.dataset.edit === editMode));
+    }
+    function bind(){
+      els.executeToggle.onclick = () => { executeMode = !executeMode; beep(executeMode?760:460,.02,.05); renderExecute(); };
+      els.todayBtn.onclick = () => { selectedDay = todayIndex(); expanded = null; beep(600,.02,.04); render(); };
+      els.soundBtn.onclick = () => { soundOn = !soundOn; savePrefs(); if (soundOn) beep(720,.025,.05); renderClock(); };
+      els.exportBtn.onclick = exportData;
+      els.resetBtn.onclick = () => {
+        if (!confirm(`Reset ${DAY_NAMES[selectedDay]} back to its original schedule?`)) return;
+        db.days[selectedDay] = clone(defaultData.days[selectedDay]);
+        saveData();
+        expanded = null;
+        beep(420,.02,.05);
+        render();
+      };
+      q('#viewFull').onclick = () => { executeMode = false; renderExecute(); };
+      q('#viewExecute').onclick = () => { executeMode = true; renderExecute(); };
+      els.editBtn.onclick = openEditor;
+      els.closeModal.onclick = closeEditor;
+      els.cancelBlock.onclick = closeEditor;
+      els.modalWrap.onclick = (e) => { if (e.target === els.modalWrap) closeEditor(); };
+      els.saveBlock.onclick = saveEditedBlock;
+    }
+    function qAll(s){ return Array.from(document.querySelectorAll(s)); }
+    function setupSwitches(){
+      qAll('#execSwitch button').forEach(btn => btn.onclick = () => { execStyle = btn.dataset.mode; savePrefs(); beep(650,.018,.04); renderSidebarState(); });
+      qAll('#editSwitch button').forEach(btn => btn.onclick = () => { editMode = btn.dataset.edit; savePrefs(); beep(650,.018,.04); renderSidebarState(); });
+    }
+    function openEditor(){
+      if (editMode === 'locked') { alert('Task editing is disabled in System mode. Switch Task Control to Both first.'); return; }
+      const idx = currentIndex() >= 0 ? currentIndex() : (expanded ?? 0);
+      editIndex = idx;
+      const item = currentDayData()[idx];
+      if (!item) { alert('No block available to edit.'); return; }
+      els.fieldTitle.value = item.title || '';
+      els.fieldStart.value = item.start || '';
+      els.fieldEnd.value = item.end || '';
+      els.fieldCategory.value = item.category || '';
+      els.fieldBranch.value = item.branch || 'Decus OS';
+      els.fieldSummary.value = item.summary || '';
+      els.fieldNotes.value = item.notes || '';
+      els.fieldSteps.value = (item.steps || []).join('\n');
+      els.modalWrap.classList.add('open');
+    }
+    function closeEditor(){ els.modalWrap.classList.remove('open'); }
+    function saveEditedBlock(){
+      if (editIndex == null) return;
+      const day = currentDayData();
+      day[editIndex] = {
+        ...day[editIndex],
+        title: els.fieldTitle.value.trim(),
+        start: els.fieldStart.value.trim(),
+        end: els.fieldEnd.value.trim(),
+        category: els.fieldCategory.value.trim(),
+        branch: els.fieldBranch.value,
+        summary: els.fieldSummary.value.trim(),
+        notes: els.fieldNotes.value.trim(),
+        steps: els.fieldSteps.value.split('\n').map(x => x.trim()).filter(Boolean)
+      };
+      saveData();
+      beep(800,.025,.05);
+      closeEditor();
+      render();
+    }
+    function exportData(){
+      const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'decus-os-v2-data.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      beep(690,.02,.05);
+    }
+    function ensureAudio(){
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    function beep(freq=660, vol=.02, dur=.04){
+      if (!soundOn) return;
+      ensureAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.value = vol;
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+      gain.gain.setValueAtTime(vol, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      osc.start(now); osc.stop(now + dur);
+    }
+    function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+  </script>
 </body>
 </html>
