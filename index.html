@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  />
+  <meta name="theme-color" content="#0b0b0b" />
+  <meta name="description" content="Decus OS Daily Execution System" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <title>Decus OS</title>
+  <style>
+    :root{
+      --text:#f5f0e7; --muted:#b8aa8a; --line:rgba(255,227,170,.12);
+      --accent:#d6b36a; --accent-2:#f1d18c; --accent-soft:rgba(214,179,106,.16);
+      --accent-line:rgba(214,179,106,.24); --accent-glow:rgba(214,179,106,.18);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(214,179,106,.12), transparent 35%),
+        radial-gradient(circle at 85% 10%, rgba(214,179,106,.08), transparent 30%),
+        radial-gradient(circle at bottom center, rgba(255,255,255,.03), transparent 30%),
+        linear-gradient(180deg, #0a0a0a 0%, #050505 45%, #030303 100%);
+      overflow:hidden;
+    }
+    body::before,body::after{
+      content:"";position:fixed;inset:-15%;pointer-events:none;z-index:0;
+    }
+    body::before{
+      background:
+        radial-gradient(circle at 15% 20%, rgba(214,179,106,.14), transparent 22%),
+        radial-gradient(circle at 80% 15%, rgba(120,160,220,.08), transparent 20%),
+        radial-gradient(circle at 70% 75%, rgba(80,180,120,.08), transparent 24%);
+      filter:blur(26px);animation:floatGlow 20s ease-in-out infinite alternate;opacity:.9;
+    }
+    body::after{
+      background-image:radial-gradient(circle, rgba(255,255,255,.10) 0 1px, transparent 1px);
+      background-size:26px 26px;opacity:.08;animation:drift 26s linear infinite;
+    }
+    @keyframes floatGlow{0%{transform:translate3d(0,0,0) scale(1);opacity:.85}100%{transform:translate3d(0,-18px,0) scale(1.03);opacity:1}}
+    @keyframes drift{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-40px,20px,0)}}
+    .app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;max-width:900px;margin:0 auto;padding:14px 14px 12px}
+    .glass{background:linear-gradient(180deg, rgba(25,25,25,.88), rgba(10,10,10,.86));border:1px solid var(--line);box-shadow:0 12px 40px rgba(0,0,0,.42),0 0 0 1px rgba(241,209,140,.1),0 0 26px rgba(214,179,106,.12);backdrop-filter:blur(16px) saturate(130%)}
+    .hero{border-radius:30px;padding:16px;position:relative;overflow:hidden}
+    .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .title-row{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+    h1{margin:0;font-size:clamp(24px,4vw,36px);line-height:1.03;font-weight:800;letter-spacing:-.03em}
+    .hero-sub{color:#d1c3a3;font-size:13px;line-height:1.45;margin-top:8px;max-width:56ch}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,227,170,.14);color:var(--accent-2);font-size:12px}
+    .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent-2);animation:pulse 2s infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(241,209,140,.65)}70%{box-shadow:0 0 0 12px rgba(241,209,140,0)}100%{box-shadow:0 0 0 0 rgba(241,209,140,0)}}
+    .hero-actions,.utility-row{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .utility-row{grid-template-columns:1fr auto;align-items:center}
+    button{border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+    .btn{min-height:52px;border-radius:18px;padding:14px 16px;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s ease}
+    .btn:active{transform:scale(.985)}
+    .btn-primary{color:#1b1407;font-weight:800;background:linear-gradient(180deg,#f0cf8b,#cfa45b)}
+    .btn-secondary,.sound-toggle,.day-btn,.mini{background:rgba(255,255,255,.03);border:1px solid var(--line);color:var(--text)}
+    .progress-wrap{padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
+    .progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px}
+    .progress-track{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden}
+    .progress-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 16px var(--accent-glow);transition:width .6s ease}
+    .meta{margin-top:10px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+    .days-nav{margin-top:12px;display:flex;gap:8px;overflow:auto;padding-bottom:4px;scrollbar-width:none}
+    .days-nav::-webkit-scrollbar{display:none}
+    .day-btn{flex:0 0 auto;min-width:58px;min-height:42px;padding:10px 12px;border-radius:14px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+    .day-btn.active,.mini.active{color:#140f07;background:linear-gradient(180deg,var(--accent-2),var(--accent));border-color:transparent}
+    .content{min-height:0;flex:1 1 auto;padding-top:14px;overflow:auto;scroll-behavior:smooth}
+    .execute-panel{display:none;margin-bottom:14px;border-radius:28px;padding:14px;position:sticky;top:0;z-index:20}
+    .execute-panel.active{display:block}
+    .execute-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .execute-title,.section-label{font-size:11px;text-transform:uppercase;letter-spacing:.22em;color:var(--muted)}
+    .timer{font-size:12px;color:var(--accent-2);padding:7px 10px;border-radius:999px;background:var(--accent-soft);border:1px solid var(--accent-line);white-space:nowrap}
+    .execute-card{border-radius:24px;padding:16px;background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));border:1px solid rgba(255,227,170,.12)}
+    .execute-time{color:var(--accent-2);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+    .execute-task{font-size:24px;font-weight:800;line-height:1.06;letter-spacing:-.03em;margin-bottom:10px}
+    .execute-notes,.details-notes{color:#dccca9;font-size:14px;line-height:1.52;margin-bottom:14px}
+    .steps{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+    .step{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,227,170,.08);font-size:13px;color:#f0e4cb;line-height:1.45}
+    .step-index{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;background:linear-gradient(180deg, rgba(241,209,140,.28), rgba(214,179,106,.14));color:var(--accent-2);border:1px solid rgba(241,209,140,.18)}
+    .section-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 12px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.18em}
+    .schedule{display:grid;gap:10px;padding-bottom:18px}
+    .block{border-radius:24px;overflow:hidden;transition:border-color .2s ease, box-shadow .2s ease;border:1px solid transparent;position:relative}
+    .block.current{border-color:var(--accent-line);box-shadow:0 10px 28px rgba(0,0,0,.24),0 0 22px var(--accent-glow)}
+    .block::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--block-accent,var(--accent))}
+    .block-btn{width:100%;text-align:left;padding:14px 14px 14px 18px;display:block}
+    .block-top{display:flex;align-items:center;gap:12px;justify-content:space-between}
+    .time-wrap{min-width:90px;flex:0 0 auto}
+    .time{font-size:12px;color:var(--accent-2);letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+    .duration{margin-top:4px;font-size:11px;color:var(--muted)}
+    .block-main{min-width:0;flex:1 1 auto}
+    .task{font-size:16px;font-weight:750;line-height:1.18;letter-spacing:-.02em;margin:0 0 5px}
+    .summary{margin:0;color:#d4c6a7;font-size:13px;line-height:1.42}
+    .chip{flex:0 0 auto;padding:8px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid rgba(255,227,170,.12);background:rgba(255,255,255,.03);color:var(--muted);white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
+    .current .chip{color:#111;background:linear-gradient(180deg,var(--accent-2),var(--accent));border-color:transparent}
+    .block-details{max-height:0;overflow:hidden;transition:max-height .35s ease, opacity .25s ease, padding .25s ease;opacity:0;padding:0 14px 0 18px}
+    .block.expanded .block-details{max-height:1200px;opacity:1;padding:0 14px 14px 18px}
+    .divider{height:1px;background:linear-gradient(90deg, transparent, rgba(255,227,170,.12), transparent);margin:0 0 12px}
+    .floating-nav{position:sticky;bottom:0;z-index:30;padding:6px 0 10px;background:linear-gradient(180deg, transparent, rgba(3,3,3,.75) 35%, rgba(3,3,3,.97))}
+    .floating-inner{display:flex;gap:10px;padding:10px;border-radius:24px}
+    .mini{flex:1;min-height:52px;border-radius:18px;padding:12px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+    @media (max-width:700px){.hero-actions,.utility-row{grid-template-columns:1fr}.title-row{flex-direction:column}.block-top{align-items:flex-start}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="hero glass">
+      <div class="eyebrow">Decus OS • Installable Desktop App</div>
+      <div class="title-row">
+        <div>
+          <h1>Daily Execution</h1>
+          <div class="hero-sub">Installable desktop web app with seven-day rotation, execute mode, countdown timer, offline support, and branch-led visual identity.</div>
+        </div>
+        <div class="badge"><span class="pulse"></span><span id="liveStatus">Live Schedule</span></div>
+      </div>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="executeToggleBtn"><span>⚔️</span><span id="executeToggleLabel">Enter Execute Mode</span></button>
+        <button class="btn btn-secondary" id="installBtn"><span>⬇️</span><span>Install App</span></button>
+      </div>
+      <div class="utility-row">
+        <div class="progress-wrap">
+          <div class="progress-meta"><span id="progressLabel">Day Progress</span><span id="progressPercent">0%</span></div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <button class="btn sound-toggle" id="jumpNowBtn">Jump to Now</button>
+      </div>
+      <div class="meta">
+        <div id="currentDateText">Schedule</div>
+        <div id="summaryText">Loading daily flow…</div>
+      </div>
+      <div class="days-nav" id="daysNav"></div>
+    </div>
+
+    <div class="content" id="scrollArea">
+      <div class="execute-panel glass" id="executePanel">
+        <div class="execute-head">
+          <div class="execute-title">Execute Mode</div>
+          <div class="timer" id="timerText">Current block</div>
+        </div>
+        <div class="execute-card" id="executeCard"></div>
+      </div>
+
+      <div class="section-row">
+        <span id="sectionDayLabel">Full Day Schedule</span>
+        <span id="dayRange">6:30 AM → 10:30 PM</span>
+      </div>
+
+      <div class="schedule" id="schedule"></div>
+
+      <div class="floating-nav">
+        <div class="floating-inner glass">
+          <button class="mini active" id="viewFullBtn">Full Day</button>
+          <button class="mini" id="viewExecuteBtn">Execute</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+const BRANCH_COLORS = {
+  "Charis Machaira": { accent:"#7f9fcb", accent2:"#b8d1ff", soft:"rgba(127,159,203,.16)", line:"rgba(127,159,203,.24)", glow:"rgba(127,159,203,.18)" },
+  "The Game": { accent:"#a8424c", accent2:"#e67a85", soft:"rgba(168,66,76,.16)", line:"rgba(168,66,76,.24)", glow:"rgba(168,66,76,.18)" },
+  "Terraform": { accent:"#2f8a64", accent2:"#63d89f", soft:"rgba(47,138,100,.16)", line:"rgba(47,138,100,.24)", glow:"rgba(47,138,100,.18)" },
+  "Bull Jackson": { accent:"#8d6b48", accent2:"#cba57b", soft:"rgba(141,107,72,.16)", line:"rgba(141,107,72,.24)", glow:"rgba(141,107,72,.18)" },
+  "Real Estate": { accent:"#d6b36a", accent2:"#f1d18c", soft:"rgba(214,179,106,.16)", line:"rgba(214,179,106,.24)", glow:"rgba(214,179,106,.18)" },
+  "Decus OS": { accent:"#b7c0c8", accent2:"#eef2f7", soft:"rgba(183,192,200,.16)", line:"rgba(183,192,200,.24)", glow:"rgba(183,192,200,.16)" }
+};
+const dayDisplay = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const baseMorning = [
+  { start:"06:30", end:"07:10", title:"Meditation / Prayer", category:"Charis", branch:"Charis Machaira", summary:"User-led morning stillness, prayer, breath, and internal grounding.", notes:"This block is intentionally yours.", steps:["Begin in silence.","Choose your own meditation anchor, prayer, or breath rhythm.","End by identifying one word or virtue for the day."] },
+  { start:"07:10", end:"07:20", title:"Brush + Face Reset", category:"Hygiene", branch:"Decus OS", summary:"Brush teeth, rinse face with cold water, and wake the system up.", notes:"Move with intent and avoid drifting into your phone.", steps:["Brush teeth thoroughly.","Cold water face rinse.","Prepare shaving area."] },
+  { start:"07:20", end:"07:30", title:"Shave + Grooming", category:"Hygiene", branch:"Decus OS", summary:"Simple grooming with calm focus.", notes:"Clean lines, steady pace.", steps:["Shave or groom.","Rinse and clean tools quickly.","Dress in workout-ready clothes."] },
+  { start:"07:30", end:"08:20", title:"Workout + Breathwork", category:"Fitness", branch:"Charis Machaira", summary:"Bodyweight strength, core, and breathwork sequence.", notes:"Move steadily and safely.", steps:["Warmup: pushups, squats, plank.","Strength: pushups and squats in rounds.","Core finisher.","Breathwork reset."] },
+  { start:"08:20", end:"09:00", title:"Breakfast + Readiness", category:"Meal", branch:"Bull Jackson", summary:"Fuel, clean up, and prepare for deep work.", notes:"Default meal: protein-focused bowl and water.", steps:["Eat a simple protein-focused meal.","Drink water.","Clean up and prepare workspace."] }
+];
+const mondayRemainder = [
+  { start:"09:00", end:"12:00", title:"Deep Work — Real Estate Analysis", category:"Real Estate", branch:"Real Estate", summary:"Property research, analysis, and deal logging.", notes:"Income-oriented branch work.", steps:["Open listings platform and notes doc.","Analyze six candidate properties.","Log insights and top two deals."] },
+  { start:"12:00", end:"13:00", title:"Lunch + Reset", category:"Meal", branch:"Bull Jackson", summary:"Midday fuel and brief recovery.", notes:"Keep it simple and repeatable.", steps:["Prepare or purchase lunch.","Walk or stand.","Review top follow-ups for calls."] },
+  { start:"13:00", end:"15:00", title:"Recruitment / Sales / Retention Calls", category:"Sales", branch:"Decus OS", summary:"Active money block with outbound calls and follow-ups.", notes:"Split time across recruitment, customer sales, and customer retention.", steps:["Call agent prospects.","Call customer leads.","Call or text retention contacts.","Log outcomes and next steps."] },
+  { start:"15:00", end:"17:00", title:"AI Avatar Skill + Content Build", category:"Content", branch:"The Game", summary:"Tutorial, avatar creation, script writing, and short-form output.", notes:"Build one usable content asset.", steps:["Open tool and tutorial.","Create one avatar draft.","Write short script.","Generate or plan first video."] },
+  { start:"17:00", end:"18:00", title:"Dinner + Meal Check", category:"Meal", branch:"Bull Jackson", summary:"Dinner, cleanup, and purchase check.", notes:"Note if more ingredients or meals are needed.", steps:["Prepare dinner.","Eat slowly.","Clean the space.","Write any purchase note."] },
+  { start:"18:00", end:"20:00", title:"Branch Micro Tasks + Yacht Income Research", category:"Branch Build", branch:"Decus OS", summary:"Brand ideas, yacht-related business research, and small branch actions.", notes:"Keep each task concrete and small.", steps:["Generate 3 brand or offer ideas.","Research yacht brokerage or charter models.","Complete one Decus branch micro-task."] },
+  { start:"20:00", end:"21:00", title:"Light Learning + Admin", category:"Learning", branch:"Decus OS", summary:"Low-energy educational content and light digital cleanup.", notes:"Avoid random wandering.", steps:["Choose one useful long-form item.","Handle easy admin.","Write one reflection note."] },
+  { start:"21:00", end:"22:20", title:"Wind-Down Sequence", category:"Night", branch:"Charis Machaira", summary:"Stretch, reduce screens, and prepare for sleep.", notes:"The goal is sleep quality.", steps:["Dim lights.","Stretch gently.","Reduce screens.","Prepare room and body for sleep."] },
+  { start:"22:20", end:"22:30", title:"Final 10-Minute Ritual", category:"Night", branch:"Charis Machaira", summary:"User-controlled closing ritual.", notes:"This is your space.", steps:["Complete your own final ritual.","End device interaction.","Lights out at 10:30 PM."] }
+];
+const mondaySchedule = [...baseMorning, ...mondayRemainder];
+function clone(x){ return JSON.parse(JSON.stringify(x)); }
+function mapSchedule(schedule, dayTitle, branch){
+  return schedule.map(item => {
+    const copy = clone(item);
+    if (item.start >= "09:00" && item.start < "12:00") { copy.title = `Deep Work — ${dayTitle}`; copy.branch = branch; copy.category = dayTitle; copy.summary = `Morning build block focused on ${dayTitle}.`; }
+    return copy;
+  });
+}
+function createSaturdaySchedule(){
+  const out = baseMorning.slice(0,3).map(clone);
+  let minute = 450; // 7:30
+  while(minute < 1260){
+    const s = `${String(Math.floor(minute/60)).padStart(2,"0")}:${String(minute%60).padStart(2,"0")}`;
+    const em = minute+30;
+    const e = `${String(Math.floor(em/60)).padStart(2,"0")}:${String(em%60).padStart(2,"0")}`;
+    out.push({ start:s, end:e, title:"Open Flex Time", category:"Open", branch:"Decus OS", summary:"Saturday remains open until the nightly ritual sequence.", notes:"Use this space for rest, errands, family, creation, recovery, or spontaneous work.", steps:["Choose what feels most needed right now.","Stay aligned, but do not force structure.","Capture one useful thought if it helps."] });
+    minute = em;
+  }
+  out.push(
+    { start:"21:00", end:"22:20", title:"Wind-Down Sequence", category:"Night", branch:"Charis Machaira", summary:"Saturday still closes with intention.", notes:"Ease down gradually.", steps:["Dim lights.","Stretch and breathe.","Reduce screens.","Prepare for sleep."] },
+    { start:"22:20", end:"22:30", title:"Final 10-Minute Ritual", category:"Night", branch:"Charis Machaira", summary:"User-controlled closing ritual.", notes:"This is your space.", steps:["Complete your final ritual.","End device interaction.","Lights out at 10:30 PM."] }
+  );
+  return out;
+}
+const schedules = {
+  0: mondaySchedule,
+  1: mapSchedule(mondaySchedule, "The Game", "The Game"),
+  2: mapSchedule(mondaySchedule, "Terraform", "Terraform"),
+  3: mapSchedule(mondaySchedule, "Bull Jackson", "Bull Jackson"),
+  4: mapSchedule(mondaySchedule, "Decus OS", "Decus OS"),
+  5: createSaturdaySchedule(),
+  6: mapSchedule(mondaySchedule, "Weekly Reset", "Charis Machaira")
+};
+function toMinutes(hhmm){ const [h,m] = hhmm.split(":").map(Number); return h*60+m; }
+function formatTime(hhmm){ let [h,m]=hhmm.split(":").map(Number); const suffix=h>=12?"PM":"AM"; let hour=h%12; if(hour===0) hour=12; return `${hour}:${String(m).padStart(2,"0")} ${suffix}`; }
+function rangeLabel(start,end){ return `${formatTime(start)} → ${formatTime(end)}`; }
+const defaultDayIndex = (() => { const d = new Date().getDay(); return d===0 ? 6 : d-1; })();
+let selectedDayIndex = defaultDayIndex, executeMode = false, expandedIndex = null, deferredPrompt = null;
+const root = document.documentElement, daysNav = document.getElementById("daysNav"), scheduleEl = document.getElementById("schedule"),
+executePanel = document.getElementById("executePanel"), executeCard = document.getElementById("executeCard"), executeToggleBtn = document.getElementById("executeToggleBtn"),
+executeToggleLabel = document.getElementById("executeToggleLabel"), timerText = document.getElementById("timerText"), jumpNowBtn = document.getElementById("jumpNowBtn"),
+summaryText = document.getElementById("summaryText"), currentDateText = document.getElementById("currentDateText"), liveStatus = document.getElementById("liveStatus"),
+viewFullBtn = document.getElementById("viewFullBtn"), viewExecuteBtn = document.getElementById("viewExecuteBtn"), dayRange = document.getElementById("dayRange"),
+sectionDayLabel = document.getElementById("sectionDayLabel"), progressFill = document.getElementById("progressFill"), progressPercent = document.getElementById("progressPercent"),
+installBtn = document.getElementById("installBtn");
+function getSchedule(){ return schedules[selectedDayIndex] || []; }
+function getBranchColors(branch){ return BRANCH_COLORS[branch] || BRANCH_COLORS["Decus OS"]; }
+function applyTheme(branch){
+  const c = getBranchColors(branch);
+  root.style.setProperty("--accent", c.accent); root.style.setProperty("--accent-2", c.accent2);
+  root.style.setProperty("--accent-soft", c.soft); root.style.setProperty("--accent-line", c.line); root.style.setProperty("--accent-glow", c.glow);
+}
+function isTodaySelected(){ return selectedDayIndex === defaultDayIndex; }
+function getNowMinutes(){ const now = new Date(); return now.getHours()*60 + now.getMinutes(); }
+function getCurrentBlockIndex(schedule){ const nowM = getNowMinutes(); return schedule.findIndex(item => nowM >= toMinutes(item.start) && nowM < toMinutes(item.end)); }
+function getCurrentBlockForSelectedDay(){ const schedule=getSchedule(); if (!isTodaySelected()) return -1; return getCurrentBlockIndex(schedule); }
+function getTimeUntilBlockEnd(item){
+  const now = new Date(); const endMins = toMinutes(item.end); const nowMins = now.getHours()*60 + now.getMinutes();
+  let totalSec = (endMins - nowMins) * 60 - now.getSeconds(); if (totalSec < 0) totalSec = 0;
+  return { mins: Math.floor(totalSec/60), seconds: totalSec%60 };
+}
+function renderDaysNav(){
+  daysNav.innerHTML = "";
+  dayDisplay.forEach((label, idx) => {
+    const btn = document.createElement("button"); btn.className = `day-btn ${idx===selectedDayIndex ? "active":""}`; btn.textContent = label;
+    btn.onclick = () => { selectedDayIndex = idx; expandedIndex = null; renderAll(); };
+    daysNav.appendChild(btn);
+  });
+}
+function renderProgress(){
+  const schedule = getSchedule(); const start=toMinutes(schedule[0].start), end=toMinutes(schedule[schedule.length-1].end), now=getNowMinutes();
+  let p = 0; if (isTodaySelected()) { if (now<=start) p=0; else if (now>=end) p=100; else p=((now-start)/(end-start))*100; }
+  progressFill.style.width = `${p}%`; progressPercent.textContent = `${Math.round(p)}%`;
+}
+function renderSchedule(){
+  const schedule = getSchedule(); const currentIndex = getCurrentBlockForSelectedDay(); scheduleEl.innerHTML = "";
+  schedule.forEach((item, index) => {
+    const colors = getBranchColors(item.branch);
+    const block = document.createElement("div"); block.className = `block glass ${index===currentIndex?"current":""} ${expandedIndex===index?"expanded":""}`;
+    block.style.setProperty("--block-accent", colors.accent);
+    const btn = document.createElement("button"); btn.className = "block-btn";
+    btn.innerHTML = `<div class="block-top"><div class="time-wrap"><div class="time">${rangeLabel(item.start,item.end)}</div><div class="duration">${toMinutes(item.end)-toMinutes(item.start)} minutes</div></div><div class="block-main"><div class="task">${item.title}</div><p class="summary">${item.summary}</p></div><div class="chip">${item.branch}</div></div>`;
+    btn.onclick = () => { expandedIndex = expandedIndex===index ? null : index; renderSchedule(); renderExecutePanel(); };
+    const details = document.createElement("div"); details.className = "block-details";
+    details.innerHTML = `<div class="divider"></div><p class="details-notes">${item.notes || ""}</p><ul class="steps">${item.steps.map((step,idx)=>`<li class="step"><span class="step-index">${idx+1}</span><span>${step}</span></li>`).join("")}</ul>`;
+    block.appendChild(btn); block.appendChild(details); scheduleEl.appendChild(block);
+  });
+  if (currentIndex >= 0) {
+    const item = schedule[currentIndex];
+    summaryText.textContent = `Now: ${item.title} • ${rangeLabel(item.start,item.end)}`;
+    liveStatus.textContent = "Live Now";
+    applyTheme(item.branch);
+  } else {
+    summaryText.textContent = isTodaySelected() ? "Outside active schedule window" : `Previewing ${dayNames[selectedDayIndex]}`;
+    liveStatus.textContent = isTodaySelected() ? "Standby" : "Preview";
+    applyTheme(schedule[0]?.branch || "Decus OS");
+  }
+  currentDateText.textContent = isTodaySelected() ? new Date().toLocaleDateString(undefined, {weekday:"long", month:"long", day:"numeric"}) : `${dayNames[selectedDayIndex]} Schedule`;
+  sectionDayLabel.textContent = `${dayNames[selectedDayIndex]} Schedule`;
+  dayRange.textContent = `${formatTime(schedule[0].start)} → ${formatTime(schedule[schedule.length-1].end)}`;
+  renderProgress();
+}
+function renderExecutePanel(){
+  if(!executeMode){ executePanel.classList.remove("active"); return; }
+  executePanel.classList.add("active");
+  const schedule=getSchedule(), currentIndex=getCurrentBlockForSelectedDay();
+  if(currentIndex < 0){
+    executeCard.innerHTML = `<div class="execute-time">${isTodaySelected()?"Standby":"Preview Mode"}</div><div class="execute-task">${isTodaySelected()?"No active block right now":"Selected day preview"}</div><div class="execute-notes">${isTodaySelected()?"The live schedule runs from 6:30 AM to 10:30 PM.":"Switch back to today for live countdown timing."}</div>`;
+    timerText.textContent = isTodaySelected() ? "Outside schedule" : "Preview only";
+    return;
+  }
+  const item = schedule[currentIndex], cd = getTimeUntilBlockEnd(item);
+  timerText.textContent = `${String(cd.mins).padStart(2,"0")}:${String(cd.seconds).padStart(2,"0")} left`;
+  executeCard.innerHTML = `<div class="execute-time">${rangeLabel(item.start,item.end)} • ${item.branch}</div><div class="execute-task">${item.title}</div><div class="execute-notes">${item.notes || item.summary}</div><ul class="steps">${item.steps.map((step,idx)=>`<li class="step"><span class="step-index">${idx+1}</span><span>${step}</span></li>`).join("")}</ul>`;
+}
+function renderAll(){ renderDaysNav(); renderSchedule(); renderExecutePanel(); viewExecuteBtn.classList.toggle("active", executeMode); viewFullBtn.classList.toggle("active", !executeMode); }
+executeToggleBtn.onclick = () => { executeMode = !executeMode; executeToggleLabel.textContent = executeMode ? "Exit Execute Mode" : "Enter Execute Mode"; renderExecutePanel(); renderAll(); };
+viewFullBtn.onclick = () => { executeMode=false; executeToggleLabel.textContent="Enter Execute Mode"; renderAll(); };
+viewExecuteBtn.onclick = () => { executeMode=true; executeToggleLabel.textContent="Exit Execute Mode"; renderAll(); };
+jumpNowBtn.onclick = () => { selectedDayIndex = defaultDayIndex; renderAll(); document.querySelector(".block.current")?.scrollIntoView({behavior:"smooth",block:"center"}); };
+installBtn.onclick = async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    installBtn.querySelector("span:last-child").textContent = outcome === "accepted" ? "Installed" : "Install App";
+    deferredPrompt = null;
+  } else {
+    alert("If install is available, open this in Chrome or Edge and use the browser’s Install App option.");
+  }
+};
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.querySelector("span:last-child").textContent = "Install App";
+});
+window.addEventListener("appinstalled", () => {
+  deferredPrompt = null;
+  installBtn.querySelector("span:last-child").textContent = "Installed";
+});
+if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js"));
+renderAll(); setInterval(() => { renderSchedule(); renderExecutePanel(); }, 1000);
+</script>
+</body>
+</html>
